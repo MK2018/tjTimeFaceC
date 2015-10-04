@@ -1,0 +1,36 @@
+{
+    "appKeys": {
+        "PD_DATA": 0
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "MK Apps",
+    "longName": "TJHSST Schedule in C",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/tjTimeBack2.png",
+                "name": "BACKGROUND_2",
+                "type": "png"
+            },
+            {
+                "file": "images/tjTimeBack.png",
+                "name": "background",
+                "type": "png-trans"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "TJ Time",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "2e29affa-6713-4572-83a4-2893ec3ed297",
+    "versionLabel": "0.1",
+    "watchapp": {
+        "watchface": true
+    }
+}
