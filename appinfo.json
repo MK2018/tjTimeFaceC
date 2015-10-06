@@ -11,6 +11,21 @@
     "resources": {
         "media": [
             {
+                "file": "fonts/Squares Bold Free_mainText.ttf",
+                "name": "SQUARES_BOLD_15",
+                "type": "font"
+            },
+            {
+                "file": "fonts/Squares Bold Free_12.ttf",
+                "name": "SQUARES_BOLD_12",
+                "type": "font"
+            },
+            {
+                "file": "fonts/Squares Bold Free.ttf",
+                "name": "SQUARES_BOLD_35",
+                "type": "font"
+            },
+            {
                 "file": "images/tjTimeBack2.png",
                 "name": "BACKGROUND_2",
                 "type": "png"

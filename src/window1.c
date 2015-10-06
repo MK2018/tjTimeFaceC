@@ -8,8 +8,9 @@ static int battPerc = 100;
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static GBitmap *s_res_background_2;
-static GFont s_res_bitham_34_medium_numbers;
-static GFont s_res_gothic_24;
+static GFont s_res_squares_bold_12;
+static GFont s_res_squares_bold_35;
+static GFont s_res_squares_bold_15;
 static BitmapLayer *s_bitmaplayer_1;
 static TextLayer *time_layer;
 static TextLayer *s_textlayer_1;
@@ -23,27 +24,26 @@ static void initialise_ui(void) {
   #endif
   
   s_res_background_2 = gbitmap_create_with_resource(RESOURCE_ID_BACKGROUND_2);
-  s_res_bitham_34_medium_numbers = fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS);
-  s_res_gothic_24 = fonts_get_system_font(FONT_KEY_GOTHIC_24);
+  s_res_squares_bold_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SQUARES_BOLD_12));
+  s_res_squares_bold_35 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SQUARES_BOLD_35));
+  s_res_squares_bold_15 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SQUARES_BOLD_15));
   // s_bitmaplayer_1
   s_bitmaplayer_1 = bitmap_layer_create(GRect(0, 0, 144, 168));
   bitmap_layer_set_bitmap(s_bitmaplayer_1, s_res_background_2);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_1);
   
   // time_layer
-  time_layer = text_layer_create(GRect(22, -1, 103, 39));
+  time_layer = text_layer_create(GRect(22, 4, 103, 39));
   text_layer_set_background_color(time_layer, GColorClear);
-  text_layer_set_text(time_layer, "00:00");
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
-  text_layer_set_font(time_layer, s_res_bitham_34_medium_numbers);
+  text_layer_set_font(time_layer, s_res_squares_bold_35);
   layer_add_child(window_get_root_layer(s_window), (Layer *)time_layer);
   
   // s_textlayer_1
-  s_textlayer_1 = text_layer_create(GRect(22, 34, 100, 29));
+  s_textlayer_1 = text_layer_create(GRect(22, 45, 100, 19));
   text_layer_set_background_color(s_textlayer_1, GColorClear);
-  text_layer_set_text(s_textlayer_1, "Fri, Oct 2nd");
   text_layer_set_text_alignment(s_textlayer_1, GTextAlignmentCenter);
-  text_layer_set_font(s_textlayer_1, s_res_gothic_24);
+  text_layer_set_font(s_textlayer_1, s_res_squares_bold_12);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_1);
   
   // s_textlayer_2
@@ -52,7 +52,7 @@ static void initialise_ui(void) {
   text_layer_set_text_color(s_textlayer_2, GColorWhite);
   text_layer_set_text(s_textlayer_2, "Loading...");
   text_layer_set_text_alignment(s_textlayer_2, GTextAlignmentCenter);
-  text_layer_set_font(s_textlayer_2, s_res_gothic_24);
+  text_layer_set_font(s_textlayer_2, s_res_squares_bold_15);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_2);
   
   // battery_Layer
@@ -68,6 +68,9 @@ static void destroy_ui(void) {
   text_layer_destroy(s_textlayer_2);
   layer_destroy(battery_Layer);
   gbitmap_destroy(s_res_background_2);
+  fonts_unload_custom_font(s_res_squares_bold_12);
+  fonts_unload_custom_font(s_res_squares_bold_35);
+  fonts_unload_custom_font(s_res_squares_bold_15);
 }
 // END AUTO-GENERATED UI CODE
 
@@ -77,13 +80,16 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   if (clock_is_24h_style()) {
     strftime(s_time_buffer, sizeof(s_time_buffer), "%H:%M", tick_time);
   } else {
-    strftime(s_time_buffer, sizeof(s_time_buffer), "%k:%M", tick_time);
+    strftime(s_time_buffer, sizeof(s_time_buffer), "%l:%M", tick_time);
+  }
+  if (!clock_is_24h_style() && (s_time_buffer[0] == ' ')) {
+    memmove(s_time_buffer, &s_time_buffer[1], sizeof(s_time_buffer) - 1);
   }
   strftime(s_date_buffer, sizeof(s_date_buffer), "%a %b %d", tick_time);
   text_layer_set_text(time_layer, s_time_buffer);
   text_layer_set_text(s_textlayer_1, s_date_buffer);
   // Get weather update every 30 minutes
-  //if(tick_time->tm_min % 30 == 0) {
+  if(tick_time->tm_min % 5 == 0) {
     // Begin dictionary
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
@@ -93,7 +99,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 
     // Send the message!
     app_message_outbox_send();
-  //}
+  }
 }
 
 static void battery_handler(BatteryChargeState new_state) {
