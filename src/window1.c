@@ -8,8 +8,8 @@ static int battPerc = 100;
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static GBitmap *s_res_background_2;
-static GFont s_res_squares_bold_12;
 static GFont s_res_squares_bold_35;
+static GFont s_res_squares_bold_12;
 static GFont s_res_squares_bold_15;
 static BitmapLayer *s_bitmaplayer_1;
 static TextLayer *time_layer;
@@ -24,8 +24,8 @@ static void initialise_ui(void) {
   #endif
   
   s_res_background_2 = gbitmap_create_with_resource(RESOURCE_ID_BACKGROUND_2);
-  s_res_squares_bold_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SQUARES_BOLD_12));
   s_res_squares_bold_35 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SQUARES_BOLD_35));
+  s_res_squares_bold_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SQUARES_BOLD_12));
   s_res_squares_bold_15 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SQUARES_BOLD_15));
   // s_bitmaplayer_1
   s_bitmaplayer_1 = bitmap_layer_create(GRect(0, 0, 144, 168));
@@ -33,7 +33,7 @@ static void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_1);
   
   // time_layer
-  time_layer = text_layer_create(GRect(22, 4, 103, 39));
+  time_layer = text_layer_create(GRect(7, 4, 129, 39));
   text_layer_set_background_color(time_layer, GColorClear);
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
   text_layer_set_font(time_layer, s_res_squares_bold_35);
@@ -68,8 +68,8 @@ static void destroy_ui(void) {
   text_layer_destroy(s_textlayer_2);
   layer_destroy(battery_Layer);
   gbitmap_destroy(s_res_background_2);
-  fonts_unload_custom_font(s_res_squares_bold_12);
   fonts_unload_custom_font(s_res_squares_bold_35);
+  fonts_unload_custom_font(s_res_squares_bold_12);
   fonts_unload_custom_font(s_res_squares_bold_15);
 }
 // END AUTO-GENERATED UI CODE
@@ -88,7 +88,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   strftime(s_date_buffer, sizeof(s_date_buffer), "%a %b %d", tick_time);
   text_layer_set_text(time_layer, s_time_buffer);
   text_layer_set_text(s_textlayer_1, s_date_buffer);
-  // Get weather update every 30 minutes
+  // Get weather update every 5 minutes
   if(tick_time->tm_min % 5 == 0) {
     // Begin dictionary
     DictionaryIterator *iter;
