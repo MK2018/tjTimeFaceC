@@ -69,15 +69,17 @@ function analyzeTime(jsonObj){
   if(date.getDay()==6||date.getDay()===0)
     return "Happy weekend!";
   for(var i = 1; i <= parseInt(jsonObj[0]); i++){
-    console.log("Current time: " + parseInt(getMinSinceMidnight(new Date())));
-    console.log("start time: " + parseInt(JSON.stringify(jsonObj[2].startInt)));
-    if(parseInt(JSON.stringify(jsonObj[i].endInt))>parseInt(getMinSinceMidnight(new Date()))&&parseInt(JSON.stringify(jsonObj[i].startInt))<parseInt(getMinSinceMidnight(new Date()))){
-      //console.log(JSON.stringify(jsonObj[i].name)+" is in progess");
-      if(date.getDay()==6||date.getDay()===0)
-        return "Happy weekend!"; 
-      else
-        return JSON.stringify(jsonObj[i].name)+"\n"+JSON.stringify(jsonObj[i].startForm)+ " - " +JSON.stringify(jsonObj[i].endForm);
-    }     
+    var currMin = parseInt(getMinSinceMidnight(new Date()));
+    var startMin = parseInt(JSON.stringify(jsonObj[i].startInt));
+    var endMin = parseInt(JSON.stringify(jsonObj[i].endInt));
+    //console.log("Current time: " + parseInt(getMinSinceMidnight(new Date())));
+    //console.log("start time: " + parseInt(JSON.stringify(jsonObj[i].startInt)));
+    if(i==1&&currMin<startMin)
+      return "School starts at " + JSON.stringify(jsonObj[i].startForm);
+    else if(endMin>currMin&&startMin<=currMin)
+        return JSON.stringify(jsonObj[i].name)+"\n"+JSON.stringify(jsonObj[i].startForm)+ " - " +JSON.stringify(jsonObj[i].endForm); 
+    else if(parseInt(JSON.stringify(jsonObj[i-1].endInt))<=currMin&&startMin>currMin)
+        return JSON.stringify(jsonObj[i].name)+" starts at "+ JSON.stringify(jsonObj[i].startForm);
   }
   return "No class right now. Enjoy!";
 }
@@ -99,7 +101,6 @@ function fetchSchedule(){
       var dictionary = {
         "PD_DATA": pdData,
       };
-
       Pebble.sendAppMessage(dictionary,
         function(e) {
           console.log("Schedule info sent to Pebble successfully!");
@@ -112,18 +113,10 @@ function fetchSchedule(){
     }      
   );
 }
-
-
-
-
-
 // Listen for when the watchface is opened
 Pebble.addEventListener('ready', 
   function(e) {
     console.log("PebbleKit JS ready!");
-
-    // Get the initial weather
-    //getWeather();
     fetchSchedule();
   }
 );
@@ -132,7 +125,6 @@ Pebble.addEventListener('ready',
 Pebble.addEventListener('appmessage',
   function(e) {
     console.log("AppMessage received!");
-    //getWeather();
     fetchSchedule();
   }                     
 );

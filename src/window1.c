@@ -35,6 +35,10 @@ static void initialise_ui(void) {
   // time_layer
   time_layer = text_layer_create(GRect(7, 4, 129, 39));
   text_layer_set_background_color(time_layer, GColorClear);
+  #if defined(PBL_COLOR)
+    text_layer_set_text_color(time_layer, COLOR_FALLBACK(GColorWhite, GColorBlack));
+  #endif
+  text_layer_set_text(time_layer, "");
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
   text_layer_set_font(time_layer, s_res_squares_bold_35);
   layer_add_child(window_get_root_layer(s_window), (Layer *)time_layer);
@@ -42,6 +46,10 @@ static void initialise_ui(void) {
   // s_textlayer_1
   s_textlayer_1 = text_layer_create(GRect(22, 45, 100, 19));
   text_layer_set_background_color(s_textlayer_1, GColorClear);
+  #if defined(PBL_COLOR)
+    text_layer_set_text_color(s_textlayer_1, COLOR_FALLBACK(GColorWhite, GColorBlack));
+  #endif
+  text_layer_set_text(s_textlayer_1, "");
   text_layer_set_text_alignment(s_textlayer_1, GTextAlignmentCenter);
   text_layer_set_font(s_textlayer_1, s_res_squares_bold_12);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_1);
@@ -88,7 +96,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   strftime(s_date_buffer, sizeof(s_date_buffer), "%a %b %d", tick_time);
   text_layer_set_text(time_layer, s_time_buffer);
   text_layer_set_text(s_textlayer_1, s_date_buffer);
-  // Get weather update every 5 minutes
+  // Get schedule update
   if(tick_time->tm_min % 5 == 0) {
     // Begin dictionary
     DictionaryIterator *iter;
@@ -135,20 +143,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // Look for next item
     t = dict_read_next(iterator);
   }
-  
-  // Assemble full string and display
-  //snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
-  //snprintf(pd_schedule_buffer, sizeof(pd_schedule_buffer), "%s", )
   text_layer_set_text(s_textlayer_2, pd_schedule_buffer);
-  /*GPoint p0 = GPoint(0, 0);
-  GPoint p1 = GPoint(100, 100);                          <<<<<<<<<<WORK ON THIS!!!!!!!!!!
-  graphics_context_set_stroke_color(ctx, GColorBlack);
-  graphics_draw_line(ctx, p0, p1);*/
-  
-  
-  //GPoint p0 = GPoint(0, 0);
-  //GPoint p1 = GPoint(100, 100); 
-  //graphics_context_set_stroke_color( ,GColorBlack);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -168,7 +163,6 @@ static void handle_window_unload(Window* window) {
 }
 
 static void draw_line(Layer *this_layer, GContext *ctx) {
-  // Draw things here using ctx
   GPoint p0 = GPoint(22+((100-battPerc)/2), 111);
   GPoint p1 = GPoint(122-((100-battPerc)/2), 111);
   GPoint p2 = GPoint(22+((100-battPerc)/2)+1, 110);
@@ -179,10 +173,7 @@ static void draw_line(Layer *this_layer, GContext *ctx) {
   graphics_draw_line(ctx, p0, p1);
   graphics_draw_line(ctx, p2, p3);
   graphics_draw_line(ctx, p4, p5);
-  APP_LOG(APP_LOG_LEVEL_INFO, "Line drawn");
-  /*static char buf[8];
-  snprintf(buf, sizeof(buf), "%d", battPerc);
-  APP_LOG(APP_LOG_LEVEL_INFO, buf);*/
+  //APP_LOG(APP_LOG_LEVEL_INFO, "Line drawn");
 }
 
 void show_window1(void) {

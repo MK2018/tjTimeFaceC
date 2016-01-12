@@ -28,7 +28,8 @@
             {
                 "file": "images/tjTimeBack2.png",
                 "name": "BACKGROUND_2",
-                "type": "png"
+                "targetPlatforms": null,
+                "type": "bitmap"
             },
             {
                 "file": "images/tjTimeBack.png",
@@ -44,7 +45,7 @@
         "basalt"
     ],
     "uuid": "2e29affa-6713-4572-83a4-2893ec3ed297",
-    "versionLabel": "0.1",
+    "versionLabel": "0.2",
     "watchapp": {
         "watchface": true
     }
