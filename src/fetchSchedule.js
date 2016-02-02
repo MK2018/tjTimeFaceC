@@ -98,6 +98,7 @@ function fetchSchedule(){
       //console.log(JSON.stringify(jsonObj[0].start));
       var pdData = analyzeTime(jsonObj);
       pdData = pdData.replace(/\"/g, "");
+      console.log(pdData);
       var dictionary = {
         "PD_DATA": pdData,
       };

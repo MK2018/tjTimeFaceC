@@ -5,6 +5,7 @@
 //#define KEY_CONDITIONS 1
 
 static int battPerc = 100;
+static int isCharging = 0;
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static GBitmap *s_res_background_2;
@@ -113,6 +114,10 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 static void battery_handler(BatteryChargeState new_state) {
   // Write to buffer and display
   battPerc = new_state.charge_percent;
+  if(new_state.is_charging)
+    isCharging = 1;
+  else
+    isCharging = 0;
   layer_mark_dirty(battery_Layer);
 }
 
@@ -120,7 +125,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   // Store incoming information
   //static char temperature_buffer[8];
   //static char conditions_buffer[32];
-  static char pd_schedule_buffer[32];
+  static char pd_schedule_buffer[64];
   
   // Read first item
   Tuple *t = dict_read_first(iterator);
@@ -129,9 +134,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   while(t != NULL) {
     // Which key was received?
     switch(t->key) {
-    /*case KEY_TEMPERATURE:
-      snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", (int)t->value->int32);
-      break;*/
     case PD_DATA:
       snprintf(pd_schedule_buffer, sizeof(pd_schedule_buffer), "%s", t->value->cstring);
       break;
@@ -163,16 +165,33 @@ static void handle_window_unload(Window* window) {
 }
 
 static void draw_line(Layer *this_layer, GContext *ctx) {
-  GPoint p0 = GPoint(22+((100-battPerc)/2), 111);
-  GPoint p1 = GPoint(122-((100-battPerc)/2), 111);
-  GPoint p2 = GPoint(22+((100-battPerc)/2)+1, 110);
-  GPoint p3 = GPoint(122-((100-battPerc)/2)-1, 110);
-  GPoint p4 = GPoint(22+((100-battPerc)/2)+1, 112);
-  GPoint p5 = GPoint(122-((100-battPerc)/2)-1, 112);
-  graphics_context_set_stroke_color(ctx, GColorWhite);
-  graphics_draw_line(ctx, p0, p1);
-  graphics_draw_line(ctx, p2, p3);
-  graphics_draw_line(ctx, p4, p5);
+  if(isCharging==0){
+    GPoint p0 = GPoint(22+((100-battPerc)/2), 111);
+    GPoint p1 = GPoint(122-((100-battPerc)/2), 111);
+    GPoint p2 = GPoint(22+((100-battPerc)/2)+1, 110);
+    GPoint p3 = GPoint(122-((100-battPerc)/2)-1, 110);
+    GPoint p4 = GPoint(22+((100-battPerc)/2)+1, 112);
+    GPoint p5 = GPoint(122-((100-battPerc)/2)-1, 112);
+    graphics_context_set_stroke_color(ctx, GColorWhite);
+    graphics_draw_line(ctx, p0, p1);
+    graphics_draw_line(ctx, p2, p3);
+    graphics_draw_line(ctx, p4, p5);
+  }
+  else{
+    graphics_context_set_stroke_color(ctx, GColorWhite);
+    GPoint p0 = GPoint(22+((100-battPerc)/2), 111);
+    GPoint p1 = GPoint(122-((100-battPerc)/2), 111);
+    for(int x = 22+((100-battPerc)/2)+1; x <= 122-((100-battPerc)/2)-1; x = x+2){
+      GPoint tmp1 = GPoint(x, 110);
+      graphics_draw_pixel(ctx, tmp1);
+    }     
+    for(int x = 22+((100-battPerc)/2)+1; x <= 122-((100-battPerc)/2)-1; x = x+2){
+      GPoint tmp1 = GPoint(x, 112);
+      graphics_draw_pixel(ctx, tmp1);
+    } 
+    
+    graphics_draw_line(ctx, p0, p1);
+  }
   //APP_LOG(APP_LOG_LEVEL_INFO, "Line drawn");
 }
 
@@ -186,6 +205,7 @@ void show_window1(void) {
   battery_state_service_subscribe(battery_handler);
   BatteryChargeState charge_state = battery_state_service_peek();
   battPerc = charge_state.charge_percent;
+  isCharging = charge_state.is_charging;
   // Register callbacks
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);
